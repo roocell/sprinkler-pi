@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+  <title>sprinkler-pi</title>
+  <meta charset="utf-8">
+  <meta name="description" content="sprinkler-pi">
+  <meta name="author" content="Michael Russell">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+  .button {
+  padding: 15px 25px;
+  font-size: 24px;
+  text-align: center;
+  cursor: pointer;
+  outline: none;
+  color: #fff;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+  }
+
+  .button:hover {background-color: #3e8e41}
+
+  .button:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+  }
+  </style>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"> </script>
+
+  <script>
+  // socket IO client side
+  function ready() {
+    var url = "http://" + document.domain + ':' + location.port + '/status';
+    console.log(url);
+    var socket = io.connect(url);
+    socket.on('connect', () => {
+      console.log("connected");
+      console.log(socket.id);
+  }) // end socket.on
+
+  socket.on('status', function(json) {
+    console.log("io: " + json.status)
+    updateStatus(json);
+  });
+
+  }
+  document.addEventListener("DOMContentLoaded", ready);
+
+  function updateStatus(json)
+  {
+    triggerButton = document.getElementById("triggerButton");
+    if (json.status == "off")
+    {
+      triggerButton.innerHTML = "Off";
+      triggerButton.style = "background-color: #FF0000"; // red
+    } else {
+      triggerButton.innerHTML = "On";
+      triggerButton.style = "background-color: #4CAF50"; // green
+    }
+  }
+
+  function trigger()
+  {
+    $.getJSON('/trigger', {},
+    function(data) {
+       // server Response
+    });
+  }
+  </script>
+
+  </head>
+  <body>
+  Welcome to sprinkler-pi<br>
+  <button id="triggerButton" class="button" onClick="trigger();">Checking...</button>
+  </body>
+</html>
