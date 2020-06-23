@@ -48,6 +48,7 @@ def trigger():
         GPIO.output(valve, GPIO.LOW)
     else:
         GPIO.output(valve, GPIO.HIGH)
+    socketio.emit('status', getStatus(), namespace='/status', broadcast=True)
     return "OK"
 
 def getStatus():
