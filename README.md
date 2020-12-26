@@ -28,3 +28,8 @@ WantedBy=multi-user.target<BR>
 
 add shebang to app.py  (#!/usr/bin/python3)<BR>
 chmod +x ~/sprinkler-pi/app.py<BR>
+
+sudo systemctl daemon-reload<BR>
+sudo systemctl enable sprinkler<BR>
+sudo systemctl restart sprinkler<BR>
+sudo systemctl status sprinkler.service<BR>
