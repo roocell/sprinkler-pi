@@ -1,9 +1,9 @@
 <!DOCTYPE HTML>
 <html>
   <head>
-  <title>sprinkler-pi</title>
+  <title>fireplace-pi</title>
   <meta charset="utf-8">
-  <meta name="description" content="sprinkler-pi">
+  <meta name="description" content="fireplace-pi">
   <meta name="author" content="Michael Russell">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
@@ -36,7 +36,7 @@
   <script>
   // socket IO client side
   function ready() {
-    var url = "http://" + document.domain + ':' + location.port + '/status';
+    var url = "{{http}}" + document.domain + ':' + location.port + '/status';
     console.log(url);
     var socket = io.connect(url);
     socket.on('connect', () => {
@@ -76,7 +76,7 @@
 
   </head>
   <body>
-  Welcome to sprinkler-pi<br>
+  Welcome to fireplace-pi<br>
   <button id="triggerButton" class="button" onClick="trigger();">Checking...</button>
   </body>
 </html>

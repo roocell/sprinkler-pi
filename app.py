@@ -4,7 +4,7 @@ import RPi.GPIO as GPIO
 import os, time, sys, datetime
 import logging
 import atexit
-
+import eventlet
 from flask import Flask, jsonify, request, render_template, send_from_directory
 from flask import Response, redirect, url_for
 from flask_socketio import SocketIO, emit
@@ -23,7 +23,11 @@ log.addHandler(ch)
 # create flask and socket
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app)
+
+http = "https://"
+#http = "http://"
+async_mode='eventlet'
+socketio = SocketIO(app, async_mode=async_mode)
 
 # GPIO
 valve = 8 # GPIO14
@@ -40,7 +44,7 @@ def setupgpio():
 
 @app.route('/')
 def index():
-    return render_template('index.html');
+    return render_template('index.html', http=http);
 
 @app.route('/trigger')
 def trigger():
@@ -92,4 +96,14 @@ if __name__ == '__main__':
     t = Thread(target=loop, args=(socketio,))
     t.start()
     log.debug("starting HTTP")
-    socketio.run(app, debug=True, host='0.0.0.0', port=5000, use_reloader=False)
+
+#   socketio.run(app, debug=True, host='0.0.0.0', port=5000, use_reloader=False)
+    if (http == "https://"):
+        log.debug("starting HTTPS")
+        socketio.run(app,
+            certfile='/home/pi/sprinkler-pi/fullchain.pem', keyfile='/home/pi/sprinkler-pi/privkey.pem',
+            debug=True, host='0.0.0.0', port=5501, use_reloader=False)
+    else:
+        log.debug("starting HTTP")
+        socketio.run(app,
+            debug=True, host='0.0.0.0', port=5501, use_reloader=False)
