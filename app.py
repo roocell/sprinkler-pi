@@ -8,7 +8,7 @@ import eventlet
 from flask import Flask, jsonify, request, render_template, send_from_directory
 from flask import Response, redirect, url_for
 from flask_socketio import SocketIO, emit
-from threading import Thread
+import threading
 
 
 # create logger
@@ -32,6 +32,10 @@ socketio = SocketIO(app, async_mode=async_mode)
 # GPIO
 valve = 8 # GPIO14
 
+def timeout():
+    log.debug("timeout")
+    trigger()
+
 def setupgpio():
     GPIO.setmode(GPIO.BOARD)       # use PHYSICAL GPIO Numbering
 
@@ -49,7 +53,11 @@ def index():
 @app.route('/trigger')
 def trigger():
     if (GPIO.input(valve) == GPIO.HIGH):
+        # on!
         GPIO.output(valve, GPIO.LOW)
+        log.debug("on!")
+        timer = threading.Timer(15*60.0, timeout) # 15min timeout
+        timer.start()
     else:
         GPIO.output(valve, GPIO.HIGH)
     socketio.emit('status', getStatus(), namespace='/status', broadcast=True)
@@ -93,7 +101,7 @@ def cleanup():
 
 if __name__ == '__main__':
     atexit.register(cleanup)
-    t = Thread(target=loop, args=(socketio,))
+    t = threading.Thread(target=loop, args=(socketio,))
     t.start()
     log.debug("starting HTTP")
 
@@ -102,8 +110,8 @@ if __name__ == '__main__':
         log.debug("starting HTTPS")
         socketio.run(app,
             certfile='/home/pi/sprinkler-pi/fullchain.pem', keyfile='/home/pi/sprinkler-pi/privkey.pem',
-            debug=True, host='0.0.0.0', port=5501, use_reloader=False)
+            debug=True, host='0.0.0.0', port=4000, use_reloader=False)
     else:
         log.debug("starting HTTP")
         socketio.run(app,
-            debug=True, host='0.0.0.0', port=5501, use_reloader=False)
+            debug=True, host='0.0.0.0', port=4000, use_reloader=False)
