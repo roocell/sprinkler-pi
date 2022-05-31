@@ -46,6 +46,9 @@ we need to run https in order for amazon's alexa skills to talk to the pi.
 We will be portforwarding using our domain - so we can use real certs rather than self-signed ones.
 Should be able to just copy the certs from our domain server and use them on the pizero.
 
+but here is an article explaining how to generate self signed certs
+https://blog.miguelgrinberg.com/post/running-your-flask-application-over-https
+
 #ngrok
 An alternative is to use ngrok.  https://dashboard.ngrok.com/get-started/setup
 Instantly create a public HTTPS url for a website running locally on your development machine.
