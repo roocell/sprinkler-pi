@@ -1,5 +1,8 @@
 # sprinkler-pi
 raspberry pi controller garden sprinkler
+I also use this project to control my fireplace with a simple relay.
+But I've hooked up IFTTT to my raspi webserver so I can ask alexa to 
+turn on my fireplace.
 
 
 <img src="IMG_6853.jpg" width="200">
